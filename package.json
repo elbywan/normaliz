@@ -1,0 +1,35 @@
+{
+  "name": "normaliz",
+  "version": "0.0.1",
+  "description": "A tiny library that normalizes data according to a schema.",
+  "main": "dist/index.js",
+  "module": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "start": "npm run bundle && npm run test",
+    "bundle": "rollup src/index.js --file dist/index.js --format umd --name \"normaliz\"",
+    "test": "jest"
+  },
+  "keywords": [
+    "normalize",
+    "normalizer",
+    "json",
+    "store"
+  ],
+  "author": "Julien Elbaz",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elbywan/normaliz"
+  },
+  "devDependencies": {
+    "jest": "^23.5.0",
+    "rollup": "^0.65.0"
+  }
+}

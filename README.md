@@ -44,6 +44,10 @@ const options = {
         users: 'userId',
         // Custom id for comments
         comments: comment => comment.id + ' - ' + comment.sub_id
+    },
+    // If the payload belongs to an existing entity pointed out by its id
+    from: {
+        itemsContainer: 'container_1'
     }
 }
 
@@ -69,6 +73,11 @@ const entities = normaliz(payload, options)
     },
     comments: {
         '3 - 1': { id: 3, sub_id: 1, content: 'Hello' }
-    }
+    },
+    itemsContainer: {
+        container_1: {
+            items: 1
+        }
+    },
 }
 ```

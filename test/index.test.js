@@ -32,6 +32,9 @@ test('normaliz', () => {
         keys: {
             users: 'userId',
             comments: comment => comment.id + ' - ' + comment.sub_id
+        },
+        from: {
+            itemsContainer: 'container_1'
         }
     }
 
@@ -54,6 +57,46 @@ test('normaliz', () => {
         },
         comments: {
             '3 - 1': { id: 3, sub_id: 1, content: 'Hello' }
+        },
+        itemsContainer: {
+            container_1: {
+                items: 1
+            }
+        },
+    })
+})
+
+test('from - array', () => {
+    const payload = [
+        { id: 1, field: 'value 1' },
+        { id: 2, field: 'value 2', refs: [
+            { id: 'a' }, { id: 'b' }
+        ]}
+    ]
+
+    const options = {
+        entity: 'subitems',
+        from: {
+            'items': 1
+        },
+        schema: {
+            refs: {}
+        }
+    }
+    const entities = normaliz(payload, options)
+    expect(entities).toEqual({
+        items: {
+            1: {
+                subitems: [ 1, 2 ]
+            }
+        },
+        subitems: {
+            1: { id: 1, field: 'value 1' },
+            2: { id: 2, field: 'value 2', refs: [ 'a', 'b' ] }
+        },
+        refs: {
+            a: { id: 'a'},
+            b: { id: 'b'}
         }
     })
 })

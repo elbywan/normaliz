@@ -1,5 +1,6 @@
 export default function normaliz (data, {
     entity,
+    from,
     schema,
     mappings = {}, 
     keys = {}
@@ -9,7 +10,8 @@ export default function normaliz (data, {
     if(typeof schema !== 'object') {
         throw new Error('Invalid schema - expecting an object.\n' + schema.toString())
     }
-    if(!Array.isArray(data)) {
+    const dataIsArray =  Array.isArray(data)
+    if(!dataIsArray) {
         data = [ data ]
     }
     let collection = mappings[entity] || entity
@@ -48,6 +50,21 @@ export default function normaliz (data, {
         if(!entities[collection])
             entities[collection] = {}
         entities[collection][id] = copy
+        if(from) {
+            Object.entries(from).forEach(([ fromEntity, fromId ]) => {
+                if(!entities[fromEntity])
+                    entities[fromEntity] = {}
+                if(!entities[fromEntity][fromId])
+                    entities[fromEntity][fromId] = {}
+                if(dataIsArray) {
+                    if(!entities[fromEntity][fromId][collection])
+                        entities[fromEntity][fromId][collection] = []
+                    entities[fromEntity][fromId][collection].push(id)
+                } else {
+                    entities[fromEntity][fromId][collection] = id
+                }
+            })
+        }
         return entities
     }, entities)
 

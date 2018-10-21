@@ -4,6 +4,8 @@
 
 ```js
 
+import { normaliz, denormaliz } from 'normaliz'
+
 const payload = {
     id: 1,
     title: 'My Item',
@@ -23,7 +25,8 @@ const payload = {
 }
 // Note: payload can also be an array of items.
 
-const options = {
+
+const entities = normaliz(payload, {
     // Required fields
     entity: 'items',
     schema: {
@@ -49,9 +52,7 @@ const options = {
     from: {
         itemsContainer: 'container_1'
     }
-}
-
-const entities = normaliz(payload, options)
+})
 
 // Normalized entities:
 
@@ -80,4 +81,17 @@ const entities = normaliz(payload, options)
         }
     },
 }
+
+// De-normalize an entity
+const originalData = denormaliz(entities.items[1], {
+    // Required fields
+    entities,
+    schema: {
+        post: {},
+        users: {
+            comments: {}
+        }
+    },
+    mappings: { post: 'posts' }
+})
 ```

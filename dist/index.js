@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global.normaliz = factory());
-}(this, (function () { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (factory((global.normaliz = {})));
+}(this, (function (exports) { 'use strict';
 
     function normaliz (data, {
         entity,
@@ -13,13 +13,13 @@
     } = {}, entities = {}) {
         if(!data)
             return entities
-        if(typeof schema !== 'object') {
-            throw new Error('Invalid schema - expecting an object.\n' + schema.toString())
-        }
-        const dataIsArray =  Array.isArray(data);
-        if(!dataIsArray) {
+        if(typeof schema !== 'object')
+            throw new Error('Invalid schema - expecting an object. Got: ' + schema)
+
+        const dataIsArray = Array.isArray(data);
+        if(!dataIsArray)
             data = [ data ];
-        }
+
         let collection = mappings[entity] || entity;
         let innerEntities = Object.keys(schema);
         entities = data.reduce((entities, item) => {
@@ -77,6 +77,46 @@
         return entities
     }
 
-    return normaliz;
+    function denormaliz (entity, {
+        entities,
+        schema,
+        mappings = {}, 
+        keys = {}
+    } = {}, data = {}) {
+        if(!entity)
+            return data
+        if(typeof schema !== 'object')
+            throw new Error('Invalid schema - expecting an object.\n' + schema)
+
+        const copy = Object.assign({}, entity);
+        const innerEntities = Object.keys(schema);
+        innerEntities.forEach(innerEntity => {
+            let entityValue = copy[innerEntity];
+            if(!entityValue)
+                return
+            const collection = innerEntity in mappings ?
+                mappings[innerEntity] :
+                innerEntity;
+            const denormalizeById = id => (
+                denormaliz(entities[collection][id], {
+                    entities,
+                    schema: schema[innerEntity],
+                    mappings
+                })
+            );
+            copy[innerEntity] =
+                Array.isArray(entityValue) ?
+                    copy[innerEntity].map(denormalizeById) :
+                    denormalizeById(entityValue);
+
+        });
+
+        return copy
+    }
+
+    exports.normaliz = normaliz;
+    exports.denormaliz = denormaliz;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
 
 })));

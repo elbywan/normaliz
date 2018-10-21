@@ -19,12 +19,11 @@ test('normaliz', () => {
         }]
     }
     const options = {
+        entity: 'items',
         schema: {
-            items: {
-                post: {},
-                users: {
-                    comments: {}
-                }
+            post: {},
+            users: {
+                comments: {}
             }
         },
         mappings: {

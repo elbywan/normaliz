@@ -1,19 +1,19 @@
 export default function normaliz (data, {
+    entity,
     schema,
     mappings = {}, 
     keys = {}
 } = {}, entities = {}) {
     if(!data)
         return entities
-    if(Object.keys(schema).length !== 1) {
-        throw new Error('Invalid schema - expecting exactly one root property but got more or 0 instead.\n' + schema.toString())
+    if(typeof schema !== 'object') {
+        throw new Error('Invalid schema - expecting an object.\n' + schema.toString())
     }
     if(!Array.isArray(data)) {
         data = [ data ]
     }
-    let entity = Object.keys(schema)[0]
     let collection = mappings[entity] || entity
-    let innerEntities = Object.keys(schema[entity])
+    let innerEntities = Object.keys(schema)
     entities = data.reduce((entities, item) => {
         const copy = Object.assign({}, item)
         const id =
@@ -28,9 +28,8 @@ export default function normaliz (data, {
                 return
             let innerKeyId = keys[innerEntity] || 'id'
             entities = normaliz(entityValue,{
-                schema: {
-                    [innerEntity]: schema[entity][innerEntity]
-                },
+                entity: innerEntity,
+                schema: schema[innerEntity],
                 mappings,
                 keys
             }, entities)

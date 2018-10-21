@@ -3,6 +3,7 @@
 #### A tiny library that normalizes data according to a schema.
 
 ```js
+
 const payload = {
     id: 1,
     title: 'My Item',
@@ -20,28 +21,35 @@ const payload = {
         }]
     }]
 }
+// Note: payload can also be an array of items.
 
 const options = {
+    // Required fields
+    entity: 'items',
     schema: {
-        items: {
-            post: {},
-            users: {
-                comments: {}
-            }
+        // An 'item' includes:
+        post: {}, // - a post
+        users: {  // - some users
+            // An 'item.user' includes:
+            comments: {} // - some comments
         }
     },
+    // Optional fields
     mappings: {
+        // The 'items.post' field refers to the 'posts' entity
         post: 'posts'
     },
     keys: {
+        // The 'users' entity has an id field named 'userId'
         users: 'userId',
+        // Custom id for comments
         comments: comment => comment.id + ' - ' + comment.sub_id
     }
 }
 
 const entities = normaliz(payload, options)
 
-// entities:
+// Normalized entities:
 
 {
     items : {

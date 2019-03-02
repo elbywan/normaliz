@@ -20,12 +20,12 @@ test('normaliz', () => {
     }
     const entities = normaliz(payload, {
         entity: 'items',
-        schema: {
-            post: {},
-            users: {
-                comments: {}
-            }
-        },
+        schema: [
+            'post', [
+            'users', [
+                'comments'
+            ]]
+        ],
         mappings: {
             post: 'posts'
         },
@@ -77,9 +77,7 @@ test('normaliz > from with array', () => {
         from: {
             'items': 1
         },
-        schema: {
-            refs: {}
-        }
+        schema: [ 'refs' ]
     }
     const entities = normaliz(payload, options)
     expect(entities).toEqual({
@@ -127,12 +125,12 @@ test('denormaliz', () => {
     }
     const item = denormaliz(entities.items[1], {
         entities,
-        schema: {
-            post: {},
-            users: {
-                comments: {}
-            }
-        },
+        schema: [
+            'post', [
+            'users', [
+                'comments'
+            ]]
+        ],
         mappings: { post: 'posts' }
     })
     expect(item).toEqual({

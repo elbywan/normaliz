@@ -27,17 +27,20 @@ const payload = {
 
 
 const entities = normaliz(payload, {
-    // Required fields
+    /* Required fields */
     entity: 'items',
-    schema: {
-        // An 'item' includes:
-        post: {}, // - a post
-        users: {  // - some users
-            // An 'item.user' includes:
-            comments: {} // - some comments
-        }
-    },
-    // Optional fields
+    schema: [
+        // An 'item' includes
+        // a post
+        'post', [
+        // a list of users
+        'users', [
+            // An 'item.user' includes
+            // a list of comments
+            'comments'
+        ]]
+    ],
+    /* Optional fields */
     mappings: {
         // The 'items.post' field refers to the 'posts' entity
         post: 'posts'
@@ -86,12 +89,12 @@ const entities = normaliz(payload, {
 const originalData = denormaliz(entities.items[1], {
     // Required fields
     entities,
-    schema: {
-        post: {},
-        users: {
-            comments: {}
-        }
-    },
+    schema: [
+        'post', [
+        'users', [
+            'comments'
+        ]]
+    ],
     mappings: { post: 'posts' }
 })
 ```

@@ -13,15 +13,21 @@
     } = {}, entities = {}) {
         if(!data)
             return entities
-        if(typeof schema !== 'object')
-            throw new Error('Invalid schema - expecting an object. Got: ' + schema)
+        if(typeof schema !== 'object' || !(schema instanceof Array))
+            throw new Error('Invalid schema - expecting an array. Got: ' + schema)
 
         const dataIsArray = Array.isArray(data);
         if(!dataIsArray)
             data = [ data ];
 
         let collection = mappings[entity] || entity;
-        let innerEntities = Object.keys(schema);
+        const objectSchema = schema.reduce((acc, item) => {
+            if(typeof item === 'object' && item instanceof Array)
+                acc[item[0]] = item[1];
+            else
+                acc[item] = [];
+            return acc
+        }, {});
         entities = data.reduce((entities, item) => {
             const copy = Object.assign({}, item);
             const id =
@@ -30,14 +36,14 @@
                         keys[entity](item) :
                     item[keys[entity]] :
                 item.id;
-            innerEntities.forEach(innerEntity => {
+            Object.entries(objectSchema).forEach(([ innerEntity, innerSchema ]) => {
                 let entityValue = copy[innerEntity];
                 if(!entityValue)
                     return
                 let innerKeyId = keys[innerEntity] || 'id';
                 entities = normaliz(entityValue,{
                     entity: innerEntity,
-                    schema: schema[innerEntity],
+                    schema: innerSchema,
                     mappings,
                     keys
                 }, entities);
@@ -85,12 +91,18 @@
     } = {}, data = {}) {
         if(!entity)
             return data
-        if(typeof schema !== 'object')
-            throw new Error('Invalid schema - expecting an object.\n' + schema)
+        if(typeof schema !== 'object' || !(schema instanceof Array))
+            throw new Error('Invalid schema - expecting an array. Got: ' + schema)
 
         const copy = Object.assign({}, entity);
-        const innerEntities = Object.keys(schema);
-        innerEntities.forEach(innerEntity => {
+        const objectSchema = schema.reduce((acc, item) => {
+            if(typeof item === 'object' && item instanceof Array)
+                acc[item[0]] = item[1];
+            else
+                acc[item] = [];
+            return acc
+        }, {});
+        Object.entries(objectSchema).forEach(([ innerEntity, innerSchema ]) => {
             let entityValue = copy[innerEntity];
             if(!entityValue)
                 return
@@ -100,7 +112,7 @@
             const denormalizeById = id => (
                 denormaliz(entities[collection][id], {
                     entities,
-                    schema: schema[innerEntity],
+                    schema: innerSchema,
                     mappings
                 })
             );

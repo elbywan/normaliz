@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "start": "npm run bundle && npm run test",
-    "bundle": "rollup src/index.js --file dist/index.js --format umd --name \"normaliz\"",
+    "bundle": "rollup src/index.js --config --file dist/index.js --format umd --name \"normaliz\"",
     "test": "jest"
   },
   "keywords": [
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "jest": "^23.5.0",
-    "rollup": "^0.65.0"
+    "rollup": "^0.65.0",
+    "rollup-plugin-terser": "^4.0.4"
   }
 }

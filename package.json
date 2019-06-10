@@ -1,6 +1,6 @@
 {
   "name": "normaliz",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A tiny library that normalizes data according to a schema.",
   "main": "dist/index.js",
   "module": "src/index.js",

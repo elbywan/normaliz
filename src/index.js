@@ -6,9 +6,11 @@ export function normaliz (data, {
     keys = {}
 } = {}, entities = {}) {
     if(!data)
-        return entities
+        return data
     if(typeof schema !== 'object' || !(schema instanceof Array))
         throw new Error('Invalid schema - expecting an array. Got: ' + schema)
+    if(typeof entity !== 'string')
+        throw new Error('Invalid entity - expecting a string. Got: ' + entity)
 
     const dataIsArray = Array.isArray(data)
     if(!dataIsArray)
@@ -50,9 +52,6 @@ export function normaliz (data, {
                     typeof innerKeyId === 'function' ? innerKeyId(entityValue) : entityValue[innerKeyId]
             }
         })
-        if(typeof collection === 'function') {
-            collection = mappings[entity](data)
-        }
         if(!entities[collection])
             entities[collection] = {}
         entities[collection][id] = copy
@@ -84,7 +83,7 @@ export function denormaliz (entity, {
     keys = {}
 } = {}, data = {}) {
     if(!entity)
-        return data
+        return entity
     if(typeof schema !== 'object' || !(schema instanceof Array))
         throw new Error('Invalid schema - expecting an array. Got: ' + schema)
 

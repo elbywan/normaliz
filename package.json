@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "start": "npm run bundle && npm run test",
-    "bundle": "rollup src/index.js --config --file dist/index.js --format umd --name \"normaliz\"",
+    "bundle": "rollup src/index.js --config --file dist/index.js --format umd --name \"normaliz\" -m",
     "test": "jest --coverage",
     "coverage": "cat ./coverage/lcov.info | coveralls"
   },
@@ -30,6 +30,9 @@
     "url": "https://github.com/elbywan/normaliz"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "babel-jest": "^24.8.0",
     "coveralls": "^3.0.4",
     "jest": "^24.8.0",
     "rollup": "^1.14.6",

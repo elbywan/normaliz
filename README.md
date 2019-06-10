@@ -1,6 +1,17 @@
 # normaliz
 
+[![Npm](https://img.shields.io/npm/v/normaliz.svg)](https://www.npmjs.com/package/normaliz)
+[![Build Status](https://travis-ci.org/elbywan/normaliz.svg?branch=master)](https://travis-ci.org/elbywan/normaliz)
+[![Coverage Status](https://coveralls.io/repos/github/elbywan/normaliz/badge.svg?branch=master)](https://coveralls.io/github/elbywan/normaliz?branch=master)
+[![Minzipped size](https://badgen.net/bundlephobia/minzip/normaliz)](https://bundlephobia.com/result?p=normaliz)
+
 ### A tiny library that normalizes data according to a schema.
+
+## Setup
+
+`npm i normaliz`
+
+## Usage
 
 ```js
 

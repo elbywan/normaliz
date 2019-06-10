@@ -1,6 +1,6 @@
 # normaliz
 
-#### A tiny library that normalizes data according to a schema.
+### A tiny library that normalizes data according to a schema.
 
 ```js
 

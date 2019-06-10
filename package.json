@@ -14,7 +14,8 @@
   "scripts": {
     "start": "npm run bundle && npm run test",
     "bundle": "rollup src/index.js --config --file dist/index.js --format umd --name \"normaliz\"",
-    "test": "jest"
+    "test": "jest --coverage",
+    "coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "keywords": [
     "normalize",
@@ -29,8 +30,9 @@
     "url": "https://github.com/elbywan/normaliz"
   },
   "devDependencies": {
-    "jest": "^23.5.0",
-    "rollup": "^0.65.0",
-    "rollup-plugin-terser": "^4.0.4"
+    "coveralls": "^3.0.4",
+    "jest": "^24.8.0",
+    "rollup": "^1.14.6",
+    "rollup-plugin-terser": "^5.0.0"
   }
 }

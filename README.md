@@ -5,13 +5,27 @@
 [![Coverage Status](https://coveralls.io/repos/github/elbywan/normaliz/badge.svg?branch=master)](https://coveralls.io/github/elbywan/normaliz?branch=master)
 [![Minzipped size](https://badgen.net/bundlephobia/minzip/normaliz)](https://bundlephobia.com/result?p=normaliz)
 
-### A tiny library that normalizes data according to a schema.
+## A tiny library that normalizes data according to a schema.
 
-## Setup
+### Why
+
+Why not 😁 !
+
+No, really [normalizr](https://github.com/paularmstrong/normalizr) is a great library, but I needed something simpler and lighter.
+
+### Features
+
+- 💸 **Lightweight** (< 700 bytes minzipped, even less if tree-shaken)
+
+- 💪 **Simple but powerful and intuitive API**
+
+- ✅ **Battle tested**
+
+### Setup
 
 `npm i normaliz`
 
-## Usage
+### Usage
 
 ```js
 

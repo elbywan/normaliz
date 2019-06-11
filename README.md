@@ -7,11 +7,7 @@
 
 ## A tiny library that normalizes data according to a schema.
 
-### Why
-
-Why not 😁 !
-
-No, really [normalizr](https://github.com/paularmstrong/normalizr) is a great library, but I needed something simpler and lighter.
+**Inspired by [normalizr](https://github.com/paularmstrong/normalizr) which is a great library. I just needed something more intuitive and lightweight.**
 
 ### Features
 

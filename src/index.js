@@ -8,20 +8,23 @@ const objectifySchema = schema => schema.reduce((acc, item) => {
       ]
     }
   } else {
-    acc[item] = [[]]
+    acc[item] = [
+      []
+    ]
   }
   return acc
 }, {})
-
 
 export function normaliz(data, {
   entity,
   from,
   schema,
   options = {}
-} = {}, entities = {}) {
+} = {}, entities = {}, clone = true) {
   if (!data)
     return data
+  if (clone)
+    data = JSON.parse(JSON.stringify(data))
   if (!(schema instanceof Array))
     throw new Error('Invalid schema - expecting an array. Got: ' + schema)
   if (typeof entity !== 'string')
@@ -34,49 +37,56 @@ export function normaliz(data, {
   const collection = options.mapping || entity
 
   entities = data.reduce((entities, item) => {
-    const copy = Object.assign({}, item)
     const id =
       options.key ?
       typeof options.key === 'function' ?
       options.key(item) :
       item[options.key] :
       item.id
+
     Object.entries(objectifySchema(schema)).forEach(([innerEntity, [innerSchema, innerOptions = {}]]) => {
-      let entityValue = copy[innerEntity]
+      let entityValue = item[innerEntity]
       if (!entityValue)
         return
       let innerKeyId = innerOptions.key || 'id'
       entities = normaliz(entityValue, {
         entity: innerEntity,
         schema: innerSchema,
-        options: innerOptions
-      }, entities)
-      if (Array.isArray(entityValue)) {
-        copy[innerEntity] = entityValue.map(v =>
-          typeof innerKeyId === 'function' ? innerKeyId(v) : v[innerKeyId]
-        )
+        options: innerOptions,
+      }, entities, false)
+      if (!(innerOptions.normalize === false)) {
+        if (Array.isArray(entityValue)) {
+          item[innerEntity] = entityValue.map(v =>
+            typeof innerKeyId === 'function' ? innerKeyId(v) : v[innerKeyId]
+          )
+        } else {
+          item[innerEntity] =
+            typeof innerKeyId === 'function' ? innerKeyId(entityValue) : entityValue[innerKeyId]
+        }
       } else {
-        copy[innerEntity] =
-          typeof innerKeyId === 'function' ? innerKeyId(entityValue) : entityValue[innerKeyId]
+        item[innerEntity] = entityValue
       }
     })
-    if (!entities[collection])
-      entities[collection] = {}
-    entities[collection][id] = copy
-    if (from) {
-      Object.entries(from).forEach(([fromEntity, fromId]) => {
-        if (!entities[fromEntity])
-          entities[fromEntity] = {}
-        if (!entities[fromEntity][fromId])
-          entities[fromEntity][fromId] = {}
-        if (dataIsArray) {
-          if (!entities[fromEntity][fromId][collection])
-            entities[fromEntity][fromId][collection] = []
-          entities[fromEntity][fromId][collection].push(id)
-        } else {
-          entities[fromEntity][fromId][collection] = id
-        }
-      })
+
+    if (!(options.normalize === false)) {
+      if (!entities[collection])
+        entities[collection] = {}
+      entities[collection][id] = item
+      if (from) {
+        Object.entries(from).forEach(([fromEntity, fromId]) => {
+          if (!entities[fromEntity])
+            entities[fromEntity] = {}
+          if (!entities[fromEntity][fromId])
+            entities[fromEntity][fromId] = {}
+          if (dataIsArray) {
+            if (!entities[fromEntity][fromId][collection])
+              entities[fromEntity][fromId][collection] = []
+            entities[fromEntity][fromId][collection].push(id)
+          } else {
+            entities[fromEntity][fromId][collection] = id
+          }
+        })
+      }
     }
     return entities
   }, entities)
@@ -94,27 +104,27 @@ export function denormaliz(entity, {
   if (!(schema instanceof Array))
     throw new Error('Invalid schema - expecting an array. Got: ' + schema)
 
-  const copy = Object.assign({}, entity)
-
   Object.entries(objectifySchema(schema)).forEach(([innerEntity, [innerSchema, innerOptions = {}]]) => {
-    let entityValue = copy[innerEntity]
+    let entityValue = entity[innerEntity]
     if (!entityValue)
       return
-    const collection = innerOptions.mapping || innerEntity
 
-    const denormalizeById = id => (
-      denormaliz(entities[collection][id], {
+    const collection = innerOptions.mapping || innerEntity
+    const dontNormalize = innerOptions.normalize === false
+
+    const denormalize = entity => (
+      denormaliz(entity, {
         entities,
         schema: innerSchema,
         options: innerOptions
       })
     )
-    copy[innerEntity] =
-      Array.isArray(entityValue) ?
-      copy[innerEntity].map(denormalizeById) :
-      denormalizeById(entityValue)
 
+    entity[innerEntity] =
+      Array.isArray(entityValue) ?
+      entity[innerEntity].map(value => denormalize(dontNormalize ? value : entities[collection][value])) :
+      denormalize(dontNormalize ? entityValue : entities[collection][entityValue])
   })
 
-  return copy
+  return JSON.parse(JSON.stringify(entity))
 }
